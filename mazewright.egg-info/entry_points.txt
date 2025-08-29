@@ -1,0 +1,2 @@
+[console_scripts]
+mazewright = mazewright.__main__:main
