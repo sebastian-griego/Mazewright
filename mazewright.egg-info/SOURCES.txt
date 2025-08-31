@@ -3,6 +3,7 @@ pyproject.toml
 mazewright/__init__.py
 mazewright/__main__.py
 mazewright/maze.py
+mazewright/solver.py
 mazewright/visualize.py
 mazewright.egg-info/PKG-INFO
 mazewright.egg-info/SOURCES.txt
