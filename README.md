@@ -162,11 +162,9 @@ mazewright/
 ## Future Enhancements (v0.2+)
 
 - **Export formats**: SVG, ASCII art
-- **Solver**: Path-finding with visualization
 - **More algorithms**: Wilson's, Aldous-Broder, Hunt-and-Kill
 - **Masks**: Non-rectangular grids, shaped mazes
 - **Themes**: Preset visual styles
-- **Animation**: Step-by-step generation visualization
 
 ## License
 

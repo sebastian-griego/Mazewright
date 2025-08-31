@@ -8,9 +8,9 @@ version = "0.1.0"
 description = "A Python package for generating and visualizing mazes"
 readme = "README.md"
 requires-python = ">=3.10"
-license = "MIT"
+license = {text = "MIT"}
 authors = [
-    {name = "sebastian-griego", email = "sebastian-griego@example.com"}
+    {name = "Sebastian Griego", email = "sebastianngriego@gmail.com"}
 ]
 dependencies = [
     "matplotlib>=3.5.0",
