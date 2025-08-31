@@ -14,11 +14,13 @@ A Python package for generating and visualizing perfect mazes using various algo
 ## Installation
 
 ```bash
-pip install -e .
+pip install mazewright
 ```
 
 For development:
 ```bash
+git clone https://github.com/sebastian-griego/Mazewright.git
+cd Mazewright
 pip install -e ".[dev]"
 ```
 
