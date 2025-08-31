@@ -100,15 +100,15 @@ def render(
                 linestyle='-', alpha=0.8, zorder=10)
     
     # Add start and finish markers
-    # Start at top-left corner
+    # Start at top-left corner (green circle)
     start_x = 0.5 * cell_size
     start_y = (maze.rows - 0.5) * cell_size
-    ax.plot(start_x, start_y, 'o', color=start_finish_color, markersize=cell_size * 8, label='Start')
+    ax.plot(start_x, start_y, 'o', color='green', markersize=cell_size * 12, label='Start')
     
-    # Finish at bottom-right corner
+    # Finish at bottom-right corner (red square)
     finish_x = (maze.cols - 0.5) * cell_size
     finish_y = 0.5 * cell_size
-    ax.plot(finish_x, finish_y, 's', color=start_finish_color, markersize=cell_size * 8, label='Finish')
+    ax.plot(finish_x, finish_y, 's', color='red', markersize=cell_size * 12, label='Finish')
 
     # Set plot properties with padding to ensure border walls are fully visible
     padding = wall_width / 50  # Padding based on wall width to prevent clipping
