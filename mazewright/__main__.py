@@ -8,6 +8,7 @@ from pathlib import Path
 
 from mazewright import generate
 from mazewright.visualize import save
+from mazewright.solver import solve_bfs
 
 
 def main() -> None:
@@ -63,6 +64,12 @@ def main() -> None:
         help="Wall width in pixels (default: 2)",
     )
 
+    parser.add_argument(
+        "--solved",
+        action="store_true",
+        help="Show solution path on the maze",
+    )
+
     args = parser.parse_args()
 
     # Validate arguments
@@ -75,6 +82,14 @@ def main() -> None:
         print(f"Generating {args.rows}x{args.cols} maze using {args.algorithm}...")
         maze = generate(args.rows, args.cols, algorithm=args.algorithm)
 
+        # Solve maze if requested
+        solution_path = None
+        if args.solved:
+            print("Solving maze...")
+            solution_path = solve_bfs(maze)
+            if solution_path is None:
+                print("Warning: No solution found for this maze!", file=sys.stderr)
+
         # Save visualization
         print(f"Saving to {args.output}...")
         save(
@@ -82,9 +97,13 @@ def main() -> None:
             str(args.output),
             cell_size=args.cell_size,
             wall_width=args.wall_width,
+            solution_path=solution_path,
         )
 
-        print(f"Success! Maze saved to {args.output}")
+        if args.solved and solution_path:
+            print(f"Success! Maze with solution saved to {args.output}")
+        else:
+            print(f"Success! Maze saved to {args.output}")
 
     except Exception as e:
         print(f"Error: {e}", file=sys.stderr)
