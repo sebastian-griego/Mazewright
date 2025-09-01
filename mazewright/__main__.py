@@ -7,7 +7,7 @@ import sys
 from pathlib import Path
 
 from mazewright import generate
-from mazewright.visualize import save
+from mazewright.visualize import save, save_svg, save_ascii
 from mazewright.solver import solve_bfs
 
 
@@ -47,7 +47,14 @@ def main() -> None:
         dest="output",
         type=Path,
         default=Path("maze.png"),
-        help="Output file path (default: maze.png)",
+        help="Output file path (default: maze.png). Supports .png, .svg, .txt extensions",
+    )
+    
+    parser.add_argument(
+        "--format",
+        choices=["auto", "png", "svg", "ascii"],
+        default="auto",
+        help="Output format (default: auto-detect from file extension)",
     )
 
     parser.add_argument(
@@ -90,15 +97,45 @@ def main() -> None:
             if solution_path is None:
                 print("Warning: No solution found for this maze!", file=sys.stderr)
 
+        # Determine output format
+        output_format = args.format
+        if output_format == "auto":
+            ext = args.output.suffix.lower()
+            if ext == ".svg":
+                output_format = "svg"
+            elif ext in [".txt", ".ascii"]:
+                output_format = "ascii"
+            else:
+                output_format = "png"
+        
         # Save visualization
-        print(f"Saving to {args.output}...")
-        save(
-            maze,
-            str(args.output),
-            cell_size=args.cell_size,
-            wall_width=args.wall_width,
-            solution_path=solution_path,
-        )
+        print(f"Saving to {args.output} as {output_format.upper()}...")
+        
+        if output_format == "svg":
+            save_svg(
+                maze,
+                str(args.output),
+                cell_size=args.cell_size,
+                wall_width=args.wall_width,
+                solution_path=solution_path,
+            )
+        elif output_format == "ascii":
+            ascii_output = save_ascii(
+                maze,
+                str(args.output),
+                solution_path=solution_path,
+            )
+            # Also print to console for ASCII
+            print("\nGenerated maze:")
+            print(ascii_output)
+        else:  # png
+            save(
+                maze,
+                str(args.output),
+                cell_size=args.cell_size,
+                wall_width=args.wall_width,
+                solution_path=solution_path,
+            )
 
         if args.solved and solution_path:
             print(f"Success! Maze with solution saved to {args.output}")

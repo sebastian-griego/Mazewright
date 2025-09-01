@@ -5,6 +5,7 @@ A Python package for generating and visualizing perfect mazes using various algo
 ## Features
 
 - **Multiple algorithms**: Recursive Backtracker, Prim's, and Kruskal's algorithms
+- **Multiple export formats**: PNG, SVG, and ASCII art output
 - **Clean API**: Simple, intuitive interface for maze generation
 - **Visualization**: Built-in matplotlib rendering with customizable styling
 - **CLI tool**: Generate mazes from the command line
@@ -48,6 +49,11 @@ python -m mazewright
 # Customize size and algorithm
 python -m mazewright --rows 30 --cols 30 --algo kruskal --out maze.png
 
+# Export to different formats
+python -m mazewright --out maze.svg      # SVG (scalable vector graphics)
+python -m mazewright --out maze.txt      # ASCII art
+python -m mazewright --format ascii      # Force ASCII output
+
 # Fine-tune appearance
 python -m mazewright --rows 15 --cols 20 --cell-size 25 --wall-width 3
 ```
@@ -88,13 +94,21 @@ maze.carve(0, 0, 0, 1)  # Connect (0,0) to (0,1)
 ### Visualization
 
 ```python
-from mazewright.visualize import render, save
+from mazewright.visualize import render, save, save_svg, save_ascii
 
 # Render to matplotlib figure
 fig = render(maze, cell_size=1.0, wall_width=2.0)
 
-# Save to file
+# Save to PNG file
 save(maze, "output.png", cell_size=20, wall_width=2, dpi=100)
+
+# Save to SVG (scalable vector graphics)
+save_svg(maze, "output.svg", cell_size=20, wall_width=2)
+
+# Save or display as ASCII art
+ascii_str = save_ascii(maze)  # Returns string
+save_ascii(maze, "output.txt")  # Saves to file
+print(ascii_str)  # Display in terminal
 ```
 
 ## Example Output
@@ -161,10 +175,10 @@ mazewright/
 
 ## Future Enhancements (v0.2+)
 
-- **Export formats**: SVG, ASCII art
 - **More algorithms**: Wilson's, Aldous-Broder, Hunt-and-Kill
 - **Masks**: Non-rectangular grids, shaped mazes
 - **Themes**: Preset visual styles
+- **3D mazes**: Multi-level maze generation
 
 ## License
 
