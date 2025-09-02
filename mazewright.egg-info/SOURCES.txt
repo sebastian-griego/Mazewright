@@ -16,3 +16,4 @@ mazewright/algorithms/backtracker.py
 mazewright/algorithms/kruskal.py
 mazewright/algorithms/prim.py
 tests/test_maze.py
+tests/test_visualize.py
