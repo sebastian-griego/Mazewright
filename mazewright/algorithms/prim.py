@@ -9,7 +9,7 @@ if TYPE_CHECKING:
     from mazewright.maze import Maze
 
 
-def generate(maze: Maze) -> None:
+def generate(maze: Maze, rng: random.Random | None = None) -> None:
     """Generate a maze using Prim's algorithm.
 
     This algorithm grows the maze from a starting cell by maintaining a
@@ -18,7 +18,11 @@ def generate(maze: Maze) -> None:
 
     Args:
         maze: The maze to generate into (will be modified in-place)
+        rng: Optional random number generator
     """
+    if rng is None:
+        rng = random
+
     # Reset maze to all walls
     maze.reset()
 
@@ -29,8 +33,8 @@ def generate(maze: Maze) -> None:
     frontier: list[tuple[int, int, int, int]] = []
 
     # Start from random cell
-    start_row = random.randint(0, maze.rows - 1)
-    start_col = random.randint(0, maze.cols - 1)
+    start_row = rng.randint(0, maze.rows - 1)
+    start_col = rng.randint(0, maze.cols - 1)
 
     # Mark starting cell as visited
     visited[start_row][start_col] = True
@@ -42,7 +46,7 @@ def generate(maze: Maze) -> None:
 
     while frontier:
         # Pick random wall from frontier
-        idx = random.randint(0, len(frontier) - 1)
+        idx = rng.randint(0, len(frontier) - 1)
         r1, c1, r2, c2 = frontier.pop(idx)
 
         # If the neighbor hasn't been visited

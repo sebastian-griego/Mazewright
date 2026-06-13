@@ -9,7 +9,7 @@ if TYPE_CHECKING:
     from mazewright.maze import Maze
 
 
-def generate(maze: Maze) -> None:
+def generate(maze: Maze, rng: random.Random | None = None) -> None:
     """Generate a maze using recursive backtracker (iterative DFS).
 
     This algorithm performs a randomized depth-first search through the grid,
@@ -17,7 +17,11 @@ def generate(maze: Maze) -> None:
 
     Args:
         maze: The maze to generate into (will be modified in-place)
+        rng: Optional random number generator
     """
+    if rng is None:
+        rng = random
+
     # Reset maze to all walls
     maze.reset()
 
@@ -28,8 +32,8 @@ def generate(maze: Maze) -> None:
     visited = [[False] * maze.cols for _ in range(maze.rows)]
 
     # Start from random cell
-    start_row = random.randint(0, maze.rows - 1)
-    start_col = random.randint(0, maze.cols - 1)
+    start_row = rng.randint(0, maze.rows - 1)
+    start_col = rng.randint(0, maze.cols - 1)
 
     # Mark starting cell as visited and push to stack
     visited[start_row][start_col] = True
@@ -46,7 +50,7 @@ def generate(maze: Maze) -> None:
 
         if unvisited_neighbors:
             # Choose random unvisited neighbor
-            nr, nc, direction, opposite = random.choice(unvisited_neighbors)
+            nr, nc, direction, opposite = rng.choice(unvisited_neighbors)
 
             # Carve passage between current and chosen neighbor
             maze.carve(current_row, current_col, nr, nc)

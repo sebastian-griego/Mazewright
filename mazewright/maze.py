@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections import deque
 from dataclasses import dataclass, field
 from enum import IntFlag
 from typing import Iterator
@@ -80,6 +81,16 @@ class Maze:
             if self.in_bounds(nr, nc):
                 yield nr, nc, direction, opposite
 
+    def open_neighbors(self, row: int, col: int) -> Iterator[tuple[int, int]]:
+        """Yield neighboring cells connected by carved passages."""
+        if not self.in_bounds(row, col):
+            raise ValueError("Cell position out of bounds")
+
+        cell = self[row, col]
+        for nr, nc, direction, _ in self.neighbors(row, col):
+            if not cell.has_wall(direction):
+                yield nr, nc
+
     def carve(self, r1: int, c1: int, r2: int, c2: int) -> None:
         """Carve a passage between two adjacent cells.
 
@@ -115,6 +126,36 @@ class Maze:
         """Iterate over all cells in the maze."""
         for row in self.grid:
             yield from row
+
+    def carved_edges(self) -> int:
+        """Count carved passages between adjacent cells."""
+        edges = 0
+        for row in range(self.rows):
+            for col in range(self.cols):
+                cell = self[row, col]
+                if col < self.cols - 1 and not cell.has_wall(Wall.EAST):
+                    edges += 1
+                if row < self.rows - 1 and not cell.has_wall(Wall.SOUTH):
+                    edges += 1
+        return edges
+
+    def is_connected(self) -> bool:
+        """Return True if every cell is reachable through carved passages."""
+        visited = {(0, 0)}
+        queue = deque([(0, 0)])
+
+        while queue:
+            row, col = queue.popleft()
+            for neighbor in self.open_neighbors(row, col):
+                if neighbor not in visited:
+                    visited.add(neighbor)
+                    queue.append(neighbor)
+
+        return len(visited) == self.rows * self.cols
+
+    def is_perfect(self) -> bool:
+        """Return True if the maze is connected and has no cycles."""
+        return self.carved_edges() == self.rows * self.cols - 1 and self.is_connected()
 
     def reset(self) -> None:
         """Reset maze to initial state with all walls."""

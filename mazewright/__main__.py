@@ -77,6 +77,12 @@ def main() -> None:
         help="Show solution path on the maze",
     )
 
+    parser.add_argument(
+        "--seed",
+        default=None,
+        help="Random seed for reproducible maze generation",
+    )
+
     args = parser.parse_args()
 
     # Validate arguments
@@ -87,7 +93,7 @@ def main() -> None:
     try:
         # Generate maze
         print(f"Generating {args.rows}x{args.cols} maze using {args.algorithm}...")
-        maze = generate(args.rows, args.cols, algorithm=args.algorithm)
+        maze = generate(args.rows, args.cols, algorithm=args.algorithm, seed=args.seed)
 
         # Solve maze if requested
         solution_path = None

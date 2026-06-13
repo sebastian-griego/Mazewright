@@ -8,58 +8,62 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from mazewright.maze import Maze
 
-from mazewright.maze import Wall
+Position = tuple[int, int]
 
 
-def solve_bfs(maze: Maze) -> list[tuple[int, int]] | None:
+def solve_bfs(
+    maze: Maze,
+    start: Position = (0, 0),
+    goal: Position | None = None,
+) -> list[Position] | None:
     """Solve maze using breadth-first search.
     
     Args:
         maze: The maze to solve
+        start: Starting cell coordinates
+        goal: Goal cell coordinates. Defaults to bottom-right.
         
     Returns:
         List of (row, col) coordinates representing the solution path,
         or None if no solution exists
     """
-    start = (0, 0)  # Top-left corner
-    end = (maze.rows - 1, maze.cols - 1)  # Bottom-right corner
-    
-    if not maze.in_bounds(*start) or not maze.in_bounds(*end):
-        return None
-    
-    queue = deque([(start, [start])])
+    if goal is None:
+        goal = (maze.rows - 1, maze.cols - 1)
+
+    if not maze.in_bounds(*start):
+        raise ValueError("Start cell is out of bounds")
+    if not maze.in_bounds(*goal):
+        raise ValueError("Goal cell is out of bounds")
+
+    if start == goal:
+        return [start]
+
+    queue = deque([start])
     visited = {start}
+    previous: dict[Position, Position | None] = {start: None}
     
     while queue:
-        (row, col), path = queue.popleft()
-        
-        if (row, col) == end:
-            return path
-            
-        cell = maze[row, col]
-        
-        # Check all four directions
-        directions = [
-            (-1, 0, Wall.NORTH),  # North
-            (0, 1, Wall.EAST),    # East
-            (1, 0, Wall.SOUTH),   # South
-            (0, -1, Wall.WEST),   # West
-        ]
-        
-        for dr, dc, wall_dir in directions:
-            new_row, new_col = row + dr, col + dc
-            
-            if (new_row, new_col) in visited:
+        current = queue.popleft()
+
+        if current == goal:
+            break
+
+        for neighbor in maze.open_neighbors(*current):
+            if neighbor in visited:
                 continue
-                
-            if not maze.in_bounds(new_row, new_col):
-                continue
-                
-            # Check if there's a wall blocking this direction
-            if cell.has_wall(wall_dir):
-                continue
-                
-            visited.add((new_row, new_col))
-            queue.append(((new_row, new_col), path + [(new_row, new_col)]))
-    
-    return None  # No solution found
+
+            visited.add(neighbor)
+            previous[neighbor] = current
+            queue.append(neighbor)
+
+    if goal not in previous:
+        return None
+
+    path = []
+    current: Position | None = goal
+    while current is not None:
+        path.append(current)
+        current = previous[current]
+
+    path.reverse()
+    return path

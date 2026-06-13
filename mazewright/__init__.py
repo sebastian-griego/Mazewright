@@ -2,21 +2,25 @@
 
 from __future__ import annotations
 
+import random
 from typing import Literal
 
 from mazewright.maze import Cell, Maze, Wall
 from mazewright.algorithms import backtracker, kruskal, prim
+from mazewright.solver import solve_bfs
 
-__version__ = "0.1.0"
-__all__ = ["Maze", "Cell", "Wall", "generate"]
+__version__ = "0.2.0"
+__all__ = ["Maze", "Cell", "Wall", "generate", "solve_bfs"]
 
 AlgorithmType = Literal["backtracker", "prim", "kruskal"]
+SeedType = int | float | str | bytes | bytearray | None
 
 
 def generate(
     rows: int,
     cols: int,
     algorithm: AlgorithmType = "backtracker",
+    seed: SeedType = None,
 ) -> Maze:
     """Generate a maze using the specified algorithm.
 
@@ -24,6 +28,7 @@ def generate(
         rows: Number of rows in the maze
         cols: Number of columns in the maze
         algorithm: Algorithm to use ("backtracker", "prim", or "kruskal")
+        seed: Optional random seed for reproducible maze generation
 
     Returns:
         Generated maze
@@ -51,5 +56,6 @@ def generate(
             f"Choose from: {', '.join(algorithms.keys())}"
         )
 
-    algorithms[algorithm](maze)
+    rng = random.Random(seed) if seed is not None else None
+    algorithms[algorithm](maze, rng=rng)
     return maze
