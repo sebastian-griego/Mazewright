@@ -8,7 +8,7 @@ from pathlib import Path
 
 from mazewright import generate
 from mazewright.visualize import save, save_svg, save_ascii
-from mazewright.solver import solve_bfs
+from mazewright.solver import solve_with_metrics
 
 
 def main() -> None:
@@ -49,7 +49,7 @@ def main() -> None:
         default=Path("maze.png"),
         help="Output file path (default: maze.png). Supports .png, .svg, .txt extensions",
     )
-    
+
     parser.add_argument(
         "--format",
         choices=["auto", "png", "svg", "ascii"],
@@ -78,6 +78,19 @@ def main() -> None:
     )
 
     parser.add_argument(
+        "--solver",
+        choices=["bfs", "astar"],
+        default="bfs",
+        help="Solver to use when --solved is set (default: bfs)",
+    )
+
+    parser.add_argument(
+        "--stats",
+        action="store_true",
+        help="Print solver path length and search effort",
+    )
+
+    parser.add_argument(
         "--seed",
         default=None,
         help="Random seed for reproducible maze generation",
@@ -97,11 +110,20 @@ def main() -> None:
 
         # Solve maze if requested
         solution_path = None
+        solution_result = None
         if args.solved:
-            print("Solving maze...")
-            solution_path = solve_bfs(maze)
+            print(f"Solving maze with {args.solver}...")
+            solution_result = solve_with_metrics(maze, algorithm=args.solver)
+            solution_path = solution_result.path
             if solution_path is None:
                 print("Warning: No solution found for this maze!", file=sys.stderr)
+            if args.stats:
+                print(
+                    "Solver stats: "
+                    f"path_length={solution_result.path_length}, "
+                    f"explored={solution_result.explored}, "
+                    f"visited={solution_result.visited}"
+                )
 
         # Determine output format
         output_format = args.format
@@ -113,10 +135,10 @@ def main() -> None:
                 output_format = "ascii"
             else:
                 output_format = "png"
-        
+
         # Save visualization
         print(f"Saving to {args.output} as {output_format.upper()}...")
-        
+
         if output_format == "svg":
             save_svg(
                 maze,

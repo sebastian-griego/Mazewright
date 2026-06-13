@@ -8,7 +8,7 @@ rectangular mazes.
 - Recursive Backtracker, Prim's, and Kruskal's generation algorithms
 - Reproducible maze generation with `seed=...`
 - Built-in maze validation helpers for connected/perfect mazes
-- Breadth-first solver with custom start and goal cells
+- Breadth-first and A* solvers with custom start/goal cells and search metrics
 - PNG, SVG, and ASCII rendering
 - Command-line interface
 
@@ -30,13 +30,15 @@ python -m pytest
 ## Quick Start
 
 ```python
-from mazewright import generate, solve_bfs
+from mazewright import generate, solve_astar, solve_with_metrics
 from mazewright.visualize import save
 
 maze = generate(20, 20, algorithm="prim", seed=123)
 assert maze.is_perfect()
 
-path = solve_bfs(maze)
+path = solve_astar(maze)
+result = solve_with_metrics(maze, algorithm="astar")
+print(result.path_length, result.explored, result.visited)
 save(maze, "my_maze.png", solution_path=path)
 ```
 
@@ -49,12 +51,13 @@ python -m mazewright --out maze.svg
 python -m mazewright --out maze.txt
 python -m mazewright --format ascii
 python -m mazewright --rows 15 --cols 20 --cell-size 25 --wall-width 3 --solved
+python -m mazewright --rows 25 --cols 25 --solved --solver astar --stats
 ```
 
 ## API
 
 ```python
-from mazewright import Maze, Wall, generate, solve_bfs
+from mazewright import Maze, Wall, generate, solve_astar, solve_bfs, solve_with_metrics
 
 maze = generate(rows=10, cols=10, algorithm="backtracker", seed=123)
 
@@ -68,6 +71,9 @@ print(maze.is_connected())
 print(maze.is_perfect())
 
 path = solve_bfs(maze, start=(0, 0), goal=(9, 9))
+astar_path = solve_astar(maze)
+metrics = solve_with_metrics(maze, algorithm="astar")
+print(metrics.path_length, metrics.explored, metrics.visited)
 ```
 
 Available algorithms:
@@ -104,7 +110,7 @@ ruff check mazewright tests
 mazewright/
 |-- __init__.py         # Public API
 |-- maze.py             # Core data structures
-|-- solver.py           # BFS path solving
+|-- solver.py           # BFS/A* path solving and metrics
 |-- visualize.py        # Rendering engine
 |-- algorithms/
 |   |-- backtracker.py  # Recursive backtracker

@@ -7,10 +7,19 @@ from typing import Literal
 
 from mazewright.maze import Cell, Maze, Wall
 from mazewright.algorithms import backtracker, kruskal, prim
-from mazewright.solver import solve_bfs
+from mazewright.solver import SolveResult, solve_astar, solve_bfs, solve_with_metrics
 
 __version__ = "0.2.0"
-__all__ = ["Maze", "Cell", "Wall", "generate", "solve_bfs"]
+__all__ = [
+    "Maze",
+    "Cell",
+    "Wall",
+    "SolveResult",
+    "generate",
+    "solve_astar",
+    "solve_bfs",
+    "solve_with_metrics",
+]
 
 AlgorithmType = Literal["backtracker", "prim", "kruskal"]
 SeedType = int | float | str | bytes | bytearray | None
