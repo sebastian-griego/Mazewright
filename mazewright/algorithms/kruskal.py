@@ -62,7 +62,7 @@ class UnionFind:
         return True
 
 
-def generate(maze: Maze) -> None:
+def generate(maze: Maze, rng: random.Random | None = None) -> None:
     """Generate a maze using Kruskal's algorithm.
 
     This algorithm treats the maze as a graph where cells are nodes and
@@ -71,7 +71,11 @@ def generate(maze: Maze) -> None:
 
     Args:
         maze: The maze to generate into (will be modified in-place)
+        rng: Optional random number generator
     """
+    if rng is None:
+        rng = random
+
     # Reset maze to all walls
     maze.reset()
 
@@ -96,7 +100,7 @@ def generate(maze: Maze) -> None:
                 walls.append((row, col, row + 1, col))
 
     # Shuffle walls for random selection
-    random.shuffle(walls)
+    rng.shuffle(walls)
 
     # Process walls
     for r1, c1, r2, c2 in walls:
